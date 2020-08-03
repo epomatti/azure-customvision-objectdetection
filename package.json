@@ -1,0 +1,28 @@
+{
+  "name": "azure-customvision-object-detection",
+  "version": "1.0.0",
+  "description": "Azure Cognitive Services Custom Vision using the JavaScript SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epomatti/azure-customvision-object-detection.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/epomatti/azure-customvision-object-detection/issues"
+  },
+  "homepage": "https://github.com/epomatti/azure-customvision-object-detection#readme",
+  "dependencies": {
+    "@azure/cognitiveservices-customvision-prediction": "^5.1.2",
+    "@azure/cognitiveservices-customvision-training": "^5.1.2",
+    "@azure/ms-rest-js": "^2.0.8",
+    "dotenv": "^8.2.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7",
+    "yolo-coords": "^1.0.4"
+  }
+}
