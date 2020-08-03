@@ -1,5 +1,7 @@
 # Azure Custom Vision - Object Detection
 
+:construction: This project is under development
+
 Azure Cognitive Services Custom Vision using the JavaScript SDK.
 
 ## Setup
