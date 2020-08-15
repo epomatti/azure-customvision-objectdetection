@@ -1,5 +1,4 @@
 import { getTrainingClient } from "./cognitiveServices"
-import { TrainingAPIClientCreateTagOptionalParams } from "@azure/cognitiveservices-customvision-training/esm/models";
 
 require('dotenv').config()
 
@@ -15,11 +14,10 @@ async function main() {
 
     console.log(`Project created. Add the ID to the .env file: ${project.id}`)
 
-    const tagObj = JSON.parse(tagsVar);
+    const tagNames = tagsVar.split(",");
     const tagPromises = []
-    tagObj.forEach((tag: { "name": string; "object": string;}) => {
-        const params: TrainingAPIClientCreateTagOptionalParams = { description : tag.object }
-        tagPromises.push(client.createTag(project.id, tag.name, params))
+    tagNames.forEach(tag => {
+        tagPromises.push(client.createTag(project.id, tag))
     })
 
     await Promise.all(tagPromises)

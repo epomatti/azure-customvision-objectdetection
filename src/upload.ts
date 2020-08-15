@@ -1,11 +1,9 @@
-const coords = require('yolo-coords')
 import { getTrainingClient } from "./cognitiveServices"
 import * as fs from 'fs';
-import * as path from 'path';
+import { ImageFileCreateBatch, ImageFileCreateEntry } from "@azure/cognitiveservices-customvision-training/esm/models";
 
 const projectId = process.env["projectId"]
-const trainingImagesSampleDataRoot = process.env["trainingImagesSampleDataRoot"]
-const trainingClassesSampleDataRoot = process.env["trainingClassesSampleDataRoot"]
+const trainingSampleDataRoot = process.env["trainingSampleDataRoot"]
 
 if (projectId === undefined || projectId.length === 0) {
     throw new Error("You must set the project ID");
@@ -14,25 +12,22 @@ if (projectId === undefined || projectId.length === 0) {
 async function main() {
     const client = getTrainingClient();
 
-    const tags = await client.getTags(projectId);
+    let fileUploadPromises = [];
+    const imageFiles = fs.readdirSync(trainingSampleDataRoot);
+    const files: ImageFileCreateEntry[] = []
+    const chunk = imageFiles.slice(0, 64)
 
-    const imageFiles = fs.readdirSync(`${trainingImagesSampleDataRoot}`);
-    imageFiles.forEach(image => {
-
-        console.log(path.parse(image).name)
-
-        // const region = { tagId: forkTag.id, left: forkImageRegions[file][0], top: forkImageRegions[file][1], width: forkImageRegions[file][2], height: forkImageRegions[file][3] };
-        // const entry = { name: file, contents: fs.readFileSync(`${forkDir}/${file}`), regions: [region] };
-        // const batch = { images: [entry] };
-        // // Wait one second to accommodate rate limit.
-        // await setTimeoutPromise(1000, null);
-        // fileUploadPromises.push(trainer.createImagesFromFiles(sampleProject.id, batch));
+    chunk.forEach(file => {
+        const data = fs.readFileSync(`${trainingSampleDataRoot}/${file}`)
+        const fileEntry: ImageFileCreateEntry = { name: file, contents: data }
+        files.push(fileEntry);
     })
+    const batch: ImageFileCreateBatch = { images: files }
+    fileUploadPromises.push(client.createImagesFromFiles(projectId, batch))
 
+    await Promise.all(fileUploadPromises);
 
-
-    // const array = coords('16', 'sample/training_images/gates_and_jobs1.txt')
-
+    console.log("Uploaded all images");
 
 }
 main()
