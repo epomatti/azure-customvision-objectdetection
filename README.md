@@ -2,7 +2,7 @@
 
 Azure Cognitive Services Custom Vision using the JavaScript SDK for Object Detection.
 
-<img src="docs/prediction_result.png" width="300"/>
+<img src="docs/beer_detection.png" />
 
 ## Setup
 
