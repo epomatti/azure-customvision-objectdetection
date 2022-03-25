@@ -2,59 +2,58 @@
 
 Azure Cognitive Services Custom Vision using the JavaScript SDK for Object Detection.
 
-<img src="docs/beer_detection.png" />
+<img src="docs/beer_detection.png" width=250 />
 
-## Setup
+## Infrastructure
 
 Create the Cognitive Services resource:
 
+```sh
+az cognitiveservices account create -n '<name>' -g '<group>' --kind CognitiveServices --sku S0 -l 'eastus2' --yes
 ```
-az cognitiveservices account create -n <name> -g <group> --kind CognitiveServices --sku S0 -l eastus --yes
-```
 
-You can also use `--sku F0` which is the free tier.
+For Cognitive Services `--sku F0` tier is no longer available.
 
-Go to [customvision.ai](https://www.customvision.ai/projects#/settings) resources and copy the folling parameters:
-
-<img src="docs/resource.png"/>
-
-You may also get these values from the Azure Portal. I opened issue [#14595](https://github.com/Azure/azure-cli/issues/14595) to get the Key using the CLI.
+## Project Setup
 
 Start by copying the sample `.env`:
 
 ```
-cp .env.sample .env
+cp example.env .env
 ```
+
+
+Go to [customvision.ai](https://www.customvision.ai/projects#/settings) resources and copy the folling parameters:
+
+<img src="docs/resource.png" width=500/>
+
+💡 _I've opened [#14595](https://github.com/Azure/azure-cli/issues/14595) to get the API Key using the CLI._
+
 
 Now add the values to the `.env` file:
 
-```
-customVisionTrainingKey=<training_key>
-customVisionTrainingEndPoint=<endpoint>
-predictionResourceId=<prediction_resource_id>
+```sh
+customVisionTrainingKey='<training_key>'
+customVisionTrainingEndPoint='<endpoint>'
+predictionResourceId='<prediction_resource_id>'
 ```
 
-:information_source: _Custom Vision recommends at least 50 images per set to ensure model performance. 
+ℹ️ _Custom Vision recommends at least 50 images per set to ensure model performance. 
 Following the rule of thumb 70/30 you should have at least 15 additional images for the prediction tests._
 
-Set the `project name` and `publish name` in the `.env` file:
+Set the remaining configuration for your project:
 
-```
-projectName=<your_project_name>
-publishName=<publish_name>
-```
+```sh
+# Project 
+projectName='<your_project_name>'
+publishName='<publish_name>'
 
-Add your samples path to the `.env` file:
+# Your sample data
+trainingSampleDataRoot='<path>'
+predictionSampleDataRoot='<path>'
 
-```
-trainingSampleDataRoot=<path>
-predictionSampleDataRoot=<path>
-```
-
-Add the tags to the `.env` file separeted by commas (`,`):
-
-```
-tags=tag1,tag2,tag3
+# Separeted by commas (`,`):
+tags='tag1,tag2,tag3'
 ```
 
 ## Training and Prediction
@@ -62,37 +61,38 @@ tags=tag1,tag2,tag3
 If you haven't already, download the dependencies:
 
 ```sh
-npm install
+yarn install
 ```
 
 First you need to create your project and tags:
 
 ```sh
-$ ts-node src/createProject.ts
-
-Project created. Add the ID to the .env file: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+# This will create and output the project id
+ts-node src/createProject.ts
 ```
 
-Add the project ID to the `.env` file:
+Add the project ID output to the `.env` file:
 
+```sh
+projectId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
 ```
-projectId=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-```
 
-Upload your images:
+Upload your images (_my script is limited to 64 images - help me with a pull request_ 😁):
 
-_My algorithm is limited to send a single batch of 64 images. Help me with a pull request :grin:_
+
 ```sh
 ts-node src/upload.ts
 ```
 
-Go to the [Custom Vision Portal](https://customvision.ai) and tag the images. You may add multiple tags for the same image.
+_My algorithm is limited to send a single batch of 64 images - help me with a pull request_ 😁
+
+Now, go to the [Custom Vision Portal](https://customvision.ai) and tag the images. You may add multiple tags for the same image.
 
 You need to have at least 15 items for each tag for object detection.
 
-<img src="docs/tag.png">
+<img src="docs/tagging.gif" width=350>
 
-Train your model:
+After you tagged all the images, train your model. This will take a while:
 
 ```sh
 ts-node src/training.ts

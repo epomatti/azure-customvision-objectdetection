@@ -2,8 +2,8 @@ import { getTrainingClient } from "./cognitiveServices"
 import * as fs from 'fs';
 import { ImageFileCreateBatch, ImageFileCreateEntry } from "@azure/cognitiveservices-customvision-training/esm/models";
 
-const projectId = process.env["projectId"]
-const trainingSampleDataRoot = process.env["trainingSampleDataRoot"]
+const projectId = process.env["projectId"]!
+const trainingSampleDataRoot = process.env["trainingSampleDataRoot"]!
 
 if (projectId === undefined || projectId.length === 0) {
     throw new Error("You must set the project ID");
